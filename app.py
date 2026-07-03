@@ -36,11 +36,17 @@ from logbus import BUS
 from tz import dual
 from workloads import catalog
 
+# V2 imports
+from api.connections import router as connections_router
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(HERE, "static")
 
 app = FastAPI(title="loadgen — MongoDB Load Generator + Validation Harness",
               version=config.APP_VERSION)
+
+# V2 routes
+app.include_router(connections_router)
 
 
 # --------------------------------------------------------------------------
