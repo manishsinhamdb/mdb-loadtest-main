@@ -82,13 +82,30 @@ fi
 echo -e "${GREEN}✓ pip3 found${NC}"
 
 # =============================================================================
-# Step 2: Install Dependencies
+# Step 2: Create Virtual Environment (if needed)
 # =============================================================================
 echo ""
-echo -e "${YELLOW}[2/7] Installing Python dependencies...${NC}"
+echo -e "${YELLOW}[2/7] Setting up Python virtual environment...${NC}"
+
+if [ ! -d "venv" ]; then
+    python3 -m venv venv
+    echo -e "${GREEN}✓ Virtual environment created${NC}"
+else
+    echo -e "${GREEN}✓ Virtual environment already exists${NC}"
+fi
+
+# Activate virtual environment
+source venv/bin/activate
+echo -e "${GREEN}✓ Virtual environment activated${NC}"
+
+# =============================================================================
+# Step 3: Install Dependencies
+# =============================================================================
+echo ""
+echo -e "${YELLOW}[3/7] Installing Python dependencies...${NC}"
 
 if [ -f "requirements.txt" ]; then
-    pip3 install -r requirements.txt --quiet
+    pip install -r requirements.txt --quiet
     echo -e "${GREEN}✓ Dependencies installed${NC}"
 else
     echo -e "${RED}✗ requirements.txt not found${NC}"
@@ -96,10 +113,10 @@ else
 fi
 
 # =============================================================================
-# Step 3: Generate Encryption Key
+# Step 4: Generate Encryption Key
 # =============================================================================
 echo ""
-echo -e "${YELLOW}[3/7] Setting up encryption key...${NC}"
+echo -e "${YELLOW}[4/7] Setting up encryption key...${NC}"
 
 # Check if encryption key already exists
 if [ -z "$LOADGEN_ENCRYPTION_KEY" ]; then
@@ -117,10 +134,10 @@ else
 fi
 
 # =============================================================================
-# Step 4: Initialize Database
+# Step 5: Initialize Database
 # =============================================================================
 echo ""
-echo -e "${YELLOW}[4/7] Initializing database...${NC}"
+echo -e "${YELLOW}[5/7] Initializing database...${NC}"
 
 if [ ! -f "loadtest.db" ]; then
     python3 -c "from db.models import Base; from db import get_engine; Base.metadata.create_all(get_engine())"
@@ -134,19 +151,19 @@ chmod 600 loadtest.db 2>/dev/null || true
 echo -e "${GREEN}✓ Database permissions set (600)${NC}"
 
 # =============================================================================
-# Step 5: Create Output Directory
+# Step 6: Create Output Directory
 # =============================================================================
 echo ""
-echo -e "${YELLOW}[5/7] Creating output directory...${NC}"
+echo -e "${YELLOW}[6/7] Creating output directory...${NC}"
 
 mkdir -p runs
 echo -e "${GREEN}✓ Output directory created (./runs)${NC}"
 
 # =============================================================================
-# Step 6: Run Tests
+# Step 7: Run Tests
 # =============================================================================
 echo ""
-echo -e "${YELLOW}[6/7] Running tests...${NC}"
+echo -e "${YELLOW}[7/7] Running tests...${NC}"
 
 # Run unit tests
 if python3 tests/test_data_structures.py > /dev/null 2>&1; then
@@ -164,10 +181,10 @@ else
 fi
 
 # =============================================================================
-# Step 7: Start Service
+# Step 8: Start Service
 # =============================================================================
 echo ""
-echo -e "${YELLOW}[7/7] Starting service...${NC}"
+echo -e "${YELLOW}[8/8] Starting service...${NC}"
 
 # Check if port is already in use
 if lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
@@ -187,13 +204,14 @@ fi
 cat > start_server.sh << EOF
 #!/bin/bash
 cd "$APP_DIR"
+source venv/bin/activate
 export LOADGEN_ENCRYPTION_KEY="$LOADGEN_ENCRYPTION_KEY"
 uvicorn app:app --host $HOST --port $PORT
 EOF
 chmod +x start_server.sh
 
-# Start server in background
-nohup uvicorn app:app --host $HOST --port $PORT > server.log 2>&1 &
+# Start server in background (with venv activated)
+nohup venv/bin/uvicorn app:app --host $HOST --port $PORT > server.log 2>&1 &
 SERVER_PID=$!
 
 # Wait for server to start
