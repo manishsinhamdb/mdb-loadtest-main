@@ -313,6 +313,18 @@ async function listSchedule() {
   $("output-dir").value = data.defaults.output_dir;
   $("db-name").value = data.defaults.db;
   if (data.defaults.persistent_backend) PERSIST_BACKEND = data.defaults.persistent_backend;
+
+  // V2: Initialize Connection Manager
+  if (typeof ConnectionManager !== 'undefined') {
+    window.connManager = new ConnectionManager({ get: api.bind(null, 'GET'), post: api.bind(null, 'POST'), put: api.bind(null, 'PUT'), delete: api.bind(null, 'DELETE') });
+    try {
+      await window.connManager.loadProfiles();
+      window.connManager.renderSelector('profile-selector-container');
+    } catch (e) {
+      console.error('Failed to load connection profiles:', e);
+    }
+  }
+
   setupHandlers();
   updateSchNote();
   showTab(0);

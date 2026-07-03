@@ -26,10 +26,28 @@
       <button class="tab-btn" data-tab="workloads" type="button"><span class="step">3</span> Workloads &amp; Run</button>
     </div>
 
-    <!-- TAB 1: CONNECTION -->
+    <!-- TAB 1: CONNECTION MANAGER (V2) -->
     <section class="tab-panel active" data-panel="connection">
       <div class="card neon-panel full">
-        <h2>Target connection</h2>
+        <h2>Connection Profiles</h2>
+        <div id="profile-selector-container">
+          <p class="muted">Loading profiles...</p>
+        </div>
+      </div>
+
+      <!-- Add/Edit Form (hidden by default) -->
+      <div id="profile-form-container" style="display:none;" class="card neon-panel full">
+        <!-- Rendered by ConnectionManager.renderForm() -->
+      </div>
+
+      <!-- Auto-Discovery Results (shown after test) -->
+      <div id="discovery-results-container" style="display:none;" class="card neon-panel full">
+        <!-- Rendered by ConnectionManager.renderDiscoveryResults() -->
+      </div>
+
+      <!-- Legacy Compatibility: Keep old connection test for backward compatibility -->
+      <details class="card neon-panel full" style="margin-top:16px;">
+        <summary style="cursor:pointer;"><b>Legacy Mode:</b> Direct Connection Test (V1 compatibility)</summary>
         <label>Connection URI (mongodb:// or mongodb+srv://)</label>
         <input id="uri" type="password" placeholder="mongodb://user:pass@host:27017/?authSource=admin" autocomplete="off" />
         <div class="btnrow">
@@ -44,7 +62,7 @@
         <div class="result" id="conn-result">Not tested yet.</div>
         <small>Password is masked after entry and never logged. The database to test is taken from
           the <b>Output Details</b> tab (default <code>loadtest</code>).</small>
-      </div>
+      </details>
     </section>
 
     <!-- TAB 2: OUTPUT DETAILS -->
@@ -152,6 +170,7 @@
     </div>
   </div>
 
+  <script src="/static/components/connection-manager.js"></script>
   <script src="/static/app.js"></script>
 </body>
 </html>
