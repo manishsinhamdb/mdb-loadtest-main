@@ -1,0 +1,36 @@
+# Python virtual environment (recreated by the deploy script)
+venv/
+.venv/
+
+# Bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Run output (manifests + logs are machine/run specific)
+runs/
+
+# Scheduler state
+*.sqlite
+loadgen_jobs.sqlite
+
+# Detached server log + pid (deploy.sh/ps1 --detached / -Detached)
+server.log
+server.log.err
+.loadgen_server.pid
+
+# OS-scheduler wrappers — these contain the connection URI + password.
+# NEVER commit these.
+win_tasks/
+mac_tasks/
+
+# Local environment / secrets
+.env
+loadgen.env
+*.local
+
+# Note: START_HERE.pdf is a generic (no-secrets) quick-start guide and IS tracked.
+
+# OS cruft
+.DS_Store
+Thumbs.db

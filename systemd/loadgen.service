@@ -1,0 +1,33 @@
+# loadgen.service — runs one scheduled load window, then exits.
+# This is the journald-logged alternative to the in-app APScheduler. The TIMER
+# (loadgen.timer) decides WHEN; this oneshot service decides WHAT to run.
+#
+# Install (do NOT auto-installed by the app):
+#   1. Edit the ExecStart line below: set the absolute repo path, the venv python,
+#      and a connection URI via an EnvironmentFile (keep creds out of the unit).
+#   2. Copy both files:   sudo cp systemd/loadgen.* /etc/systemd/system/
+#   3. sudo systemctl daemon-reload
+#   4. sudo systemctl enable --now loadgen.timer
+#   5. Watch:  journalctl -u loadgen.service -f
+#
+# Credentials: put LOADGEN_URI=... in /etc/loadgen.env (chmod 600), referenced
+# below via EnvironmentFile so the URI never appears in the unit or journal args.
+
+[Unit]
+Description=loadgen — one MongoDB load-test window (scheduled blend)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/loadgen.env
+WorkingDirectory=/opt/loadgen
+# run_window.py reads LOADGEN_URI / LOADGEN_DB / LOADGEN_OUTPUT_DIR from the env
+# and runs a single seeded mixed_blend window (default 600s).
+ExecStart=/opt/loadgen/venv/bin/python /opt/loadgen/run_window.py
+# journald captures stdout/stderr (the dual-TZ log lines).
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

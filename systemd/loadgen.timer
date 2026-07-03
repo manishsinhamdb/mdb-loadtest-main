@@ -1,0 +1,23 @@
+# loadgen.timer — fires the daily load window in IST with jitter.
+#
+# Intended window: 10:00 IST. RandomizedDelaySec spreads the actual start across
+# the 10:00-12:00 IST band so the load doesn't land at the same instant daily.
+#
+# NOTE: set the timezone explicitly so OnCalendar is interpreted as IST
+# regardless of the host's localtime. Requires systemd >= 240 for Timezone=.
+
+[Unit]
+Description=loadgen daily window timer (10:00 IST, jittered)
+
+[Timer]
+# 10:00 every day, interpreted in IST.
+OnCalendar=*-*-* 10:00:00
+Timezone=Asia/Kolkata
+# Jitter up to 2 hours so the start lands somewhere in 10:00-12:00 IST.
+RandomizedDelaySec=7200
+# If the machine was off at trigger time, run as soon as it is back up.
+Persistent=true
+Unit=loadgen.service
+
+[Install]
+WantedBy=timers.target

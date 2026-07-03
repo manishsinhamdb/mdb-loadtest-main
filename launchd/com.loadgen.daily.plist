@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sample macOS launchd LaunchAgent for a daily loadgen window.
+
+  The UI's "Permanent" schedule button generates this automatically on macOS
+  (via mactask.py) into ~/Library/LaunchAgents/com.loadgen.daily.plist and loads
+  it. This committed copy is a reference / manual-install template.
+
+  Manual install:
+    1. Copy run_window's config into a wrapper you control, e.g.
+       ~/loadgen-daily.sh  (chmod 600 — it holds the connection URI):
+         #!/bin/bash
+         export LOADGEN_URI='mongodb://user:pass@host:27017/?authSource=admin'
+         export LOADGEN_DB=loadtest
+         export LOADGEN_OUTPUT_DIR="$HOME/loadgen/runs"
+         export LOADGEN_DURATION=600
+         export LOADGEN_AUTO_SEED=1
+         export LOADGEN_JITTER_MAX_SEC=900   # launchd has no random delay
+         cd "$HOME/loadgen"
+         "$HOME/loadgen/venv/bin/python" "$HOME/loadgen/run_window.py"
+    2. Edit the wrapper path + Hour/Minute below, then:
+         cp launchd/com.loadgen.daily.plist ~/Library/LaunchAgents/
+         launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.loadgen.daily.plist
+       Check:   launchctl print gui/$(id -u)/com.loadgen.daily
+       Remove:  launchctl bootout gui/$(id -u)/com.loadgen.daily
+                rm ~/Library/LaunchAgents/com.loadgen.daily.plist
+
+  A LaunchAgent runs while you are logged on and auto-loads at login (survives
+  reboot). To run while fully logged off, install as a root LaunchDaemon in
+  /Library/LaunchDaemons instead (needs sudo).
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.loadgen.daily</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/CHANGE_ME/loadgen-daily.sh</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key><integer>10</integer>
+    <key>Minute</key><integer>0</integer>
+  </dict>
+  <key>RunAtLoad</key><false/>
+  <key>StandardOutPath</key><string>/tmp/loadgen-launchd.log</string>
+  <key>StandardErrorPath</key><string>/tmp/loadgen-launchd.log</string>
+</dict>
+</plist>

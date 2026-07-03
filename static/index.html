@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>loadgen — MongoDB Load Generator + Validation Harness</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="neon-panel">
+    <h1>loadgen <span class="sig">·</span> MongoDB Load Generator + Validation Harness</h1>
+    <div class="header-right">
+      <div class="clock">
+        <div>IST <b id="clk-ist">—</b></div>
+        <div>UTC <b id="clk-utc">—</b></div>
+      </div>
+      <button id="theme-btn" type="button" title="Cycle neon glow color">◉</button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <!-- TAB BAR -->
+    <div class="tabbar">
+      <button class="tab-btn active" data-tab="connection" type="button"><span class="step">1</span> Connection</button>
+      <button class="tab-btn" data-tab="output" type="button"><span class="step">2</span> Output Details</button>
+      <button class="tab-btn" data-tab="workloads" type="button"><span class="step">3</span> Workloads &amp; Run</button>
+    </div>
+
+    <!-- TAB 1: CONNECTION -->
+    <section class="tab-panel active" data-panel="connection">
+      <div class="card neon-panel full">
+        <h2>Target connection</h2>
+        <label>Connection URI (mongodb:// or mongodb+srv://)</label>
+        <input id="uri" type="password" placeholder="mongodb://user:pass@host:27017/?authSource=admin" autocomplete="off" />
+        <div class="btnrow">
+          <button class="secondary" id="toggle-uri" type="button">Show</button>
+          <small id="uri-redacted" class="muted"></small>
+        </div>
+        <label>Auth source (optional override)</label>
+        <input id="auth-source" type="text" placeholder="admin" />
+        <div class="btnrow">
+          <button id="btn-test" type="button">Test Connection + Permission Check</button>
+        </div>
+        <div class="result" id="conn-result">Not tested yet.</div>
+        <small>Password is masked after entry and never logged. The database to test is taken from
+          the <b>Output Details</b> tab (default <code>loadtest</code>).</small>
+      </div>
+    </section>
+
+    <!-- TAB 2: OUTPUT DETAILS -->
+    <section class="tab-panel" data-panel="output">
+      <div class="grid2">
+        <div class="card neon-panel">
+          <h2>Database &amp; output folder</h2>
+          <label>Load-test database name (editable)</label>
+          <input id="db-name" type="text" value="loadtest" />
+          <label>Output folder (manifests + logs)</label>
+          <input id="output-dir" type="text" />
+          <div class="btnrow"><button class="secondary" id="btn-output" type="button">Validate / Create</button></div>
+          <div class="result" id="output-result">—</div>
+          <div class="note" style="margin-top:12px">Each run writes <code>manifest.json</code> + <code>run.log</code>
+            into a timestamped subfolder here. Validated as writable before any run starts.</div>
+        </div>
+
+        <div class="card neon-panel">
+          <h2>Expected collections (created by the seeder)</h2>
+          <div id="collections"><small>loading…</small></div>
+          <small>Counts shown update after you seed.</small>
+        </div>
+
+        <div class="card neon-panel full">
+          <h2>Seeder (idempotent — safe to re-run)</h2>
+          <div class="row">
+            <div><label>large_dataset docs</label><input id="seed-large" type="number" value="50000" /></div>
+            <div><label>agg_dataset docs</label><input id="seed-agg" type="number" value="50000" /></div>
+            <div><label>hot_docs</label><input id="seed-hot" type="number" value="100" /></div>
+            <div><label>seed (int, optional)</label><input id="seed-seed" type="number" placeholder="random" /></div>
+          </div>
+          <div class="btnrow"><button class="secondary" id="btn-seed" type="button">Seed now</button>
+            <small id="seed-status" class="muted"></small></div>
+          <div class="result" id="seed-result">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: WORKLOADS & RUN -->
+    <section class="tab-panel" data-panel="workloads">
+      <div class="card neon-panel full">
+        <h2>Workloads — select &amp; configure</h2>
+        <div id="workloads"></div>
+      </div>
+      <div class="grid2">
+        <div class="card neon-panel">
+          <h2>Run now</h2>
+          <div class="row">
+            <div><label>Duration (seconds)</label><input id="run-duration" type="number" value="60" /></div>
+            <div><label>Run seed (int, optional)</label><input id="run-seed" type="number" placeholder="random" /></div>
+          </div>
+          <label><input type="checkbox" id="run-autoseed" /> Auto-seed before run (uses seeder values)</label>
+          <label><input type="checkbox" id="run-ignoreskew" /> Proceed even if clock skew &gt; 2s (NOT recommended)</label>
+          <div class="btnrow"><button id="btn-run" type="button">Start Run</button>
+            <span id="run-status" class="muted"></span></div>
+          <div class="result" id="run-result">—</div>
+        </div>
+
+        <div class="card neon-panel">
+          <h2>Schedule a recurring daily window</h2>
+          <label>Persistence</label>
+          <select id="sch-mode">
+            <option value="permanent">Permanent — OS scheduler (survives reboot + app closed)</option>
+            <option value="inapp">In-app — only fires while this app is running</option>
+          </select>
+          <div class="note" id="sch-note"></div>
+          <div class="row">
+            <div><label>Start (IST, HH:MM)</label><input id="sch-start" type="text" value="10:00" /></div>
+            <div><label>End (IST, HH:MM)</label><input id="sch-end" type="text" value="12:00" /></div>
+          </div>
+          <div class="row">
+            <div><label>Days</label><input id="sch-days" type="number" value="7" /></div>
+            <div><label>Per-day duration (s)</label><input id="sch-duration" type="number" value="600" /></div>
+          </div>
+          <div class="row">
+            <div><label>Base seed</label><input id="sch-seed" type="number" value="1234" /></div>
+            <div><label>Jitter / random delay (min)</label><input id="sch-jitter" type="number" value="15" /></div>
+          </div>
+          <div class="btnrow"><button id="btn-schedule" type="button">Schedule</button>
+            <button class="secondary" id="btn-sched-list" type="button">Refresh list</button>
+            <button class="secondary" id="btn-sched-remove" type="button">Remove permanent</button></div>
+          <div class="result" id="schedule-result">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB NAV -->
+    <div class="tabnav">
+      <button class="secondary" id="btn-prev" type="button">‹ Previous</button>
+      <button class="secondary" id="btn-next" type="button">Next ›</button>
+    </div>
+
+    <!-- LIVE LOG (persistent, always visible) -->
+    <div class="card neon-panel full" style="margin-top:16px">
+      <h2>Live log (IST + UTC on every line)</h2>
+      <div class="log" id="log"></div>
+    </div>
+
+    <!-- DANGER ZONE: teardown (persistent) -->
+    <div class="card neon-panel full">
+      <h2>Danger zone — teardown</h2>
+      <div class="note">Drops the load-test database and removes all scheduled jobs. Irreversible.</div>
+      <div class="btnrow"><button class="danger" id="btn-teardown" type="button">Drop DB + remove all jobs</button></div>
+      <div class="result" id="teardown-result">—</div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

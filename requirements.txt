@@ -1,0 +1,11 @@
+# MongoDB Load Generator + Validation Harness ("loadgen") — dependencies
+# Target driver: pymongo 4.x (4.17 current). [srv] extra pulls dnspython for mongodb+srv:// (Atlas).
+pymongo[srv]>=4.9,<5
+
+# Web framework + ASGI server (no build step on the frontend; UI is plain HTML+JS)
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30,<1
+
+# Scheduling with persistent (SQLite) jobstore — survives restart
+APScheduler>=3.10,<4
+SQLAlchemy>=2.0,<3
