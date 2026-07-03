@@ -18,17 +18,17 @@ class AtlasClient:
 
     BASE_URL = "https://cloud.mongodb.com/api/atlas/v2"
 
-    def __init__(self, public_key: str, private_key: str, project_id: str):
+    def __init__(self, public_key: str, private_key: str, group_id: str):
         """Initialize Atlas client.
 
         Args:
             public_key: Atlas API public key
             private_key: Atlas API private key
-            project_id: Atlas project/group ID
+            group_id: Atlas project/group ID
         """
         self.public_key = public_key
         self.private_key = private_key
-        self.project_id = project_id
+        self.group_id = group_id
         self.session = httpx.Client(timeout=30.0)
 
         # Build digest auth header
@@ -59,7 +59,7 @@ class AtlasClient:
             Dict with measurements per metric
         """
         url = (
-            f"{self.BASE_URL}/groups/{self.project_id}/processes/"
+            f"{self.BASE_URL}/groups/{self.group_id}/processes/"
             f"{host}:{port}/measurements"
         )
 
@@ -95,7 +95,7 @@ class AtlasClient:
         # For cluster metrics, use the processes endpoint with cluster aggregate
         # Atlas automatically aggregates across all processes in the cluster
         url = (
-            f"{self.BASE_URL}/groups/{self.project_id}/processes/"
+            f"{self.BASE_URL}/groups/{self.group_id}/processes/"
             f"{cluster_name}/measurements"
         )
 
@@ -131,7 +131,7 @@ class AtlasClient:
             Dict with measurements per metric
         """
         url = (
-            f"{self.BASE_URL}/groups/{self.project_id}/clusters/"
+            f"{self.BASE_URL}/groups/{self.group_id}/clusters/"
             f"{cluster_name}/fts/indexes/{index_name}/measurements"
         )
 
@@ -205,7 +205,7 @@ class AtlasClient:
         Returns:
             Cluster details including tier, version, topology
         """
-        url = f"{self.BASE_URL}/groups/{self.project_id}/clusters/{cluster_name}"
+        url = f"{self.BASE_URL}/groups/{self.group_id}/clusters/{cluster_name}"
         response = self.session.get(url)
         response.raise_for_status()
 
