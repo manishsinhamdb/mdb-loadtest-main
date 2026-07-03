@@ -6,7 +6,7 @@ Tables:
 - atlas_metrics: Metric catalog (loaded from JSON)
 - metric_workload_map: Metric→workload mappings
 """
-from __init__ import annotations
+from __future__ import annotations
 
 import json
 from datetime import datetime
