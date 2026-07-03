@@ -306,6 +306,9 @@ def api_teardown(req: TeardownReq):
 def _startup():
     BUS.info(f"loadgen v{config.APP_VERSION} started — open the UI at the host:port uvicorn is bound to")
 
+# Mount static files AFTER all routes
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
 
 # ============================================================================
 # V2: INTENT-BASED TESTING API
