@@ -1,0 +1,19 @@
+[Unit]
+Description=MongoDB Load Test Platform V2.0.0
+After=network.target
+
+[Service]
+Type=simple
+User=manishsinha
+WorkingDirectory=/Users/manishsinha/Documents/00_projects/mdb-loadtest-main
+Environment="LOADGEN_ENCRYPTION_KEY=YOUR_ENCRYPTION_KEY_HERE"
+ExecStart=/usr/local/bin/uvicorn app:app --host 127.0.0.1 --port 8001
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=append:/Users/manishsinha/Documents/00_projects/mdb-loadtest-main/server.log
+StandardError=append:/Users/manishsinha/Documents/00_projects/mdb-loadtest-main/server.error.log
+
+[Install]
+WantedBy=multi-user.target
