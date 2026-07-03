@@ -249,3 +249,130 @@ button.small{ padding:6px 12px; font-size:12px; }
 .capability.fail{ border-left:3px solid var(--strain-hi); }
 .connection-form{ max-width:600px; }
 details summary{ padding:8px; background:rgba(7,13,24,.3); border-radius:6px; }
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background: linear-gradient(160deg, #0f2238, #0a1626);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 0 40px rgba(0, 237, 100, 0.6);
+}
+
+.modal-content h3 {
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.modal-description {
+    color: var(--dim);
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+}
+
+.override-section {
+    margin-bottom: 2rem;
+}
+
+.override-section h4 {
+    color: var(--accent);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    border-bottom: 1px solid rgba(0, 237, 100, 0.3);
+    padding-bottom: 0.5rem;
+}
+
+.override-form .form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.override-form .form-row label {
+    flex: 0 0 180px;
+    color: var(--accent);
+    font-weight: bold;
+}
+
+.override-form .form-row input {
+    flex: 1;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 237, 100, 0.3);
+    border-radius: 6px;
+    color: var(--fg);
+    font-size: 1rem;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.override-form .form-row input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(0, 237, 100, 0.5);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 237, 100, 0.2);
+}
+
+.btn-secondary {
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: 2px solid var(--dim);
+    color: var(--dim);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 10px rgba(0, 237, 100, 0.3);
+}
+
+.btn-primary {
+    padding: 0.75rem 1.5rem;
+    background: var(--accent);
+    border: 2px solid var(--accent);
+    color: #000;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: transparent;
+    color: var(--accent);
+    box-shadow: 0 0 15px rgba(0, 237, 100, 0.6);
+}
