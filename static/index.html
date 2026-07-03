@@ -65,8 +65,13 @@
       </details>
     </section>
 
-    <!-- TAB 2: OUTPUT DETAILS -->
-    <section class="tab-panel" data-panel="output">
+    <!-- TAB 2: INTENT DESIGNER -->
+    <section class="tab-panel" data-panel="intent">
+      <div id="intent-designer-root"></div>
+
+      <!-- Legacy Output Details (collapsed) -->
+      <details style="margin-top: 2rem;">
+        <summary>Legacy Mode: Manual Output Configuration</summary>
       <div class="grid2">
         <div class="card neon-panel">
           <h2>Database &amp; output folder</h2>
@@ -99,9 +104,10 @@
           <div class="result" id="seed-result">—</div>
         </div>
       </div>
+      </details>
     </section>
 
-    <!-- TAB 3: WORKLOADS & RUN -->
+    <!-- TAB 3: WORKLOADS & RUN (Advanced Config) -->
     <section class="tab-panel" data-panel="workloads">
       <div class="card neon-panel full">
         <h2>Workloads — select &amp; configure</h2>
@@ -171,6 +177,16 @@
   </div>
 
   <script src="/static/components/connection-manager.js"></script>
+  <script src="/static/components/intent-designer-v2.js"></script>
   <script src="/static/app.js"></script>
+  <script>
+    // Initialize V2 Intent Designer on app load
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.IntentDesignerV2 && document.getElementById('intent-designer-root')) {
+        window.intentDesigner = new IntentDesignerV2('intent-designer-root');
+        window.intentDesigner.init();
+      }
+    });
+  </script>
 </body>
 </html>

@@ -305,3 +305,93 @@ def api_teardown(req: TeardownReq):
 @app.on_event("startup")
 def _startup():
     BUS.info(f"loadgen v{config.APP_VERSION} started — open the UI at the host:port uvicorn is bound to")
+
+
+# ============================================================================
+# V2: INTENT-BASED TESTING API
+# ============================================================================
+from intent_api import (
+    get_intent_types,
+    calculate_from_intent,
+    generate_test_from_metrics
+)
+
+
+@app.get("/api/intent/types")
+async def api_intent_types():
+    """Get all 8 intent type definitions with metric mappings."""
+    return get_intent_types()
+
+
+@app.post("/api/intent/calculate")
+async def api_intent_calculate(request: Request):
+    """Calculate workload configuration from intent + intensity."""
+    data = await request.json()
+
+    intent_id = data.get("intent_id")
+    intensity = data.get("intensity", "medium")
+    duration = data.get("duration", 600)
+    concurrency_multiplier = data.get("concurrency_multiplier", 10)
+
+    # Get hardware from session if available (connection profile discovery)
+    # For now, auto-detect
+    client_hw = data.get("client_hardware")
+    server_hw = data.get("server_hardware")
+
+    try:
+        result = calculate_from_intent(
+            intent_id=intent_id,
+            intensity=intensity,
+            duration=duration,
+            concurrency_multiplier=concurrency_multiplier,
+            client_hardware=client_hw,
+            server_hardware=server_hw
+        )
+        return result
+    except ValueError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+
+
+@app.get("/api/metrics/catalog")
+async def api_metrics_catalog():
+    """Get 130+ metric catalog (simplified for now)."""
+    # TODO: Load from atlas_metrics.json or database
+    # For now, return minimal structure
+    return {
+        "metrics": [
+            {
+                "metric_name": "OPCOUNTER_QUERY",
+                "category_name": "Operations (Opcounters)",
+                "unit": "ops/sec",
+                "description": "Number of query operations per second"
+            },
+            {
+                "metric_name": "OPCOUNTER_INSERT",
+                "category_name": "Operations (Opcounters)",
+                "unit": "ops/sec",
+                "description": "Number of insert operations per second"
+            },
+            {
+                "metric_name": "CONNECTIONS",
+                "category_name": "Connections & Network",
+                "unit": "count",
+                "description": "Current active connections to MongoDB"
+            },
+            # Add full 130 metrics from atlas_metrics.json in production
+        ]
+    }
+
+
+@app.post("/api/metrics/generate-test")
+async def api_metrics_generate_test(request: Request):
+    """Generate test configuration from selected metrics (metric-driven mode)."""
+    data = await request.json()
+    metric_names = data.get("metrics", [])
+
+    if not metric_names:
+        return JSONResponse({"error": "No metrics selected"}, status_code=400)
+
+    result = generate_test_from_metrics(metric_names)
+    return result
+
+
