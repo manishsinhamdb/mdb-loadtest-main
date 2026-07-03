@@ -444,3 +444,93 @@ class ConnectionManager {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ConnectionManager;
 }
+
+    showOverrideModal() {
+        if (!this.currentDiscovery) return;
+
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content override-modal">
+                <h3>Override Hardware Specifications</h3>
+                <p class="modal-description">Override auto-detected values. System will use these for limit calculations.</p>
+
+                <div class="override-section">
+                    <h4>Client Hardware (Driver Host)</h4>
+                    <div class="override-form">
+                        <div class="form-row">
+                            <label>CPU Cores</label>
+                            <input type="number" id="override-cpu" value="${this.currentDiscovery.client?.cpu_cores || 0}" min="1" max="256">
+                        </div>
+                        <div class="form-row">
+                            <label>RAM (GB)</label>
+                            <input type="number" id="override-ram" value="${this.currentDiscovery.client?.ram_gb || 0}" min="1" max="2048" step="0.1">
+                        </div>
+                        <div class="form-row">
+                            <label>Storage (GB)</label>
+                            <input type="number" id="override-storage" value="${this.currentDiscovery.client?.storage_gb || 0}" min="1" max="100000">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="override-section">
+                    <h4>MongoDB Target</h4>
+                    <div class="override-form">
+                        <div class="form-row">
+                            <label>Max Connections</label>
+                            <input type="number" id="override-max-conn" value="${this.currentDiscovery.server?.max_connections || 1000}" min="10" max="100000">
+                        </div>
+                        <div class="form-row">
+                            <label>Server RAM (GB)</label>
+                            <input type="number" id="override-server-ram" value="${this.currentDiscovery.server?.ram_gb || 16}" min="1" max="10000" step="0.1">
+                        </div>
+                        <div class="form-row">
+                            <label>Server vCPUs</label>
+                            <input type="number" id="override-vcpus" value="${this.currentDiscovery.server?.vcpus || 4}" min="1" max="512">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+                    <button class="btn-primary" onclick="window.connManager.saveOverrides()">Apply Overrides</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+    }
+
+    saveOverrides() {
+        const overrides = {
+            client: {
+                cpu_cores: parseInt(document.getElementById('override-cpu').value),
+                ram_gb: parseFloat(document.getElementById('override-ram').value),
+                storage_gb: parseFloat(document.getElementById('override-storage').value),
+            },
+            server: {
+                max_connections: parseInt(document.getElementById('override-max-conn').value),
+                ram_gb: parseFloat(document.getElementById('override-server-ram').value),
+                vcpus: parseInt(document.getElementById('override-vcpus').value),
+            }
+        };
+
+        // Update current discovery with overrides
+        this.currentDiscovery = {
+            ...this.currentDiscovery,
+            client: { ...this.currentDiscovery.client, ...overrides.client },
+            server: { ...this.currentDiscovery.server, ...overrides.server }
+        };
+
+        // Re-render discovery results
+        this.displayDiscoveryResults(this.currentDiscovery);
+
+        // Close modal
+        document.querySelector('.modal-overlay').remove();
+
+        console.log('Hardware overrides applied:', overrides);
+    }
+}
+
+// Export
+window.ConnectionManager = ConnectionManager;
