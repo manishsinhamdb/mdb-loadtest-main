@@ -1,0 +1,300 @@
+{
+  "metadata": {
+    "version": "2.0.0",
+    "last_updated": "2026-07-03",
+    "description": "Reference hardware profiles for common client machines and MongoDB Atlas cluster tiers"
+  },
+  "client_profiles": {
+    "macbook_air_m1": {
+      "name": "MacBook Air M1",
+      "cpu_cores": 8,
+      "cpu_threads": 8,
+      "ram_gb": 8,
+      "storage_type": "SSD",
+      "network_gbps": 1,
+      "recommended_max_threads": 60,
+      "profile_type": "laptop"
+    },
+    "macbook_pro_m1_max": {
+      "name": "MacBook Pro M1 Max",
+      "cpu_cores": 10,
+      "cpu_threads": 10,
+      "ram_gb": 32,
+      "storage_type": "SSD",
+      "network_gbps": 1,
+      "recommended_max_threads": 80,
+      "profile_type": "laptop"
+    },
+    "macbook_pro_m2_max": {
+      "name": "MacBook Pro M2 Max",
+      "cpu_cores": 12,
+      "cpu_threads": 12,
+      "ram_gb": 96,
+      "storage_type": "SSD",
+      "network_gbps": 1,
+      "recommended_max_threads": 100,
+      "profile_type": "laptop"
+    },
+    "macbook_pro_m3_max": {
+      "name": "MacBook Pro M3 Max",
+      "cpu_cores": 16,
+      "cpu_threads": 16,
+      "ram_gb": 128,
+      "storage_type": "SSD",
+      "network_gbps": 1,
+      "recommended_max_threads": 140,
+      "profile_type": "laptop"
+    },
+    "desktop_i7": {
+      "name": "Desktop Intel Core i7",
+      "cpu_cores": 8,
+      "cpu_threads": 16,
+      "ram_gb": 32,
+      "storage_type": "SSD",
+      "network_gbps": 1,
+      "recommended_max_threads": 140,
+      "profile_type": "desktop"
+    },
+    "desktop_i9": {
+      "name": "Desktop Intel Core i9",
+      "cpu_cores": 16,
+      "cpu_threads": 24,
+      "ram_gb": 64,
+      "storage_type": "NVMe",
+      "network_gbps": 10,
+      "recommended_max_threads": 220,
+      "profile_type": "desktop"
+    },
+    "desktop_ryzen_9": {
+      "name": "Desktop AMD Ryzen 9",
+      "cpu_cores": 16,
+      "cpu_threads": 32,
+      "ram_gb": 128,
+      "storage_type": "NVMe",
+      "network_gbps": 10,
+      "recommended_max_threads": 300,
+      "profile_type": "desktop"
+    },
+    "server_dual_xeon": {
+      "name": "Server Dual Xeon",
+      "cpu_cores": 32,
+      "cpu_threads": 64,
+      "ram_gb": 256,
+      "storage_type": "NVMe",
+      "network_gbps": 10,
+      "recommended_max_threads": 600,
+      "profile_type": "server"
+    },
+    "workstation_threadripper": {
+      "name": "Workstation AMD Threadripper",
+      "cpu_cores": 64,
+      "cpu_threads": 128,
+      "ram_gb": 512,
+      "storage_type": "NVMe",
+      "network_gbps": 10,
+      "recommended_max_threads": 1000,
+      "profile_type": "workstation"
+    }
+  },
+  "mongodb_atlas_tiers": {
+    "M0": {
+      "name": "M0 (Free Tier)",
+      "ram_gb": 0.5,
+      "vcpus": "Shared",
+      "storage_gb": 0.5,
+      "max_connections": 500,
+      "network_out_mbps": "Shared",
+      "iops": "Shared",
+      "suitable_for_loadtest": false,
+      "notes": "Not recommended for load testing - shared resources"
+    },
+    "M2": {
+      "name": "M2 (Shared)",
+      "ram_gb": 2,
+      "vcpus": "Shared",
+      "storage_gb": 2,
+      "max_connections": 500,
+      "network_out_mbps": "Shared",
+      "iops": "Shared",
+      "suitable_for_loadtest": false,
+      "notes": "Shared tier - unpredictable performance"
+    },
+    "M5": {
+      "name": "M5 (Shared)",
+      "ram_gb": 5,
+      "vcpus": "Shared",
+      "storage_gb": 5,
+      "max_connections": 500,
+      "network_out_mbps": "Shared",
+      "iops": "Shared",
+      "suitable_for_loadtest": false,
+      "notes": "Shared tier - unpredictable performance"
+    },
+    "M10": {
+      "name": "M10 (Dedicated)",
+      "ram_gb": 2,
+      "vcpus": 2,
+      "storage_gb": 10,
+      "max_connections": 1500,
+      "network_out_mbps": 500,
+      "iops": 3000,
+      "suitable_for_loadtest": true,
+      "recommended_client_threads": 150,
+      "notes": "Entry-level dedicated tier - suitable for light testing"
+    },
+    "M20": {
+      "name": "M20 (Dedicated)",
+      "ram_gb": 4,
+      "vcpus": 2,
+      "storage_gb": 20,
+      "max_connections": 1500,
+      "network_out_mbps": 500,
+      "iops": 3000,
+      "suitable_for_loadtest": true,
+      "recommended_client_threads": 200,
+      "notes": "Good for medium testing"
+    },
+    "M30": {
+      "name": "M30 (Dedicated)",
+      "ram_gb": 8,
+      "vcpus": 2,
+      "storage_gb": 40,
+      "max_connections": 1500,
+      "network_out_mbps": 800,
+      "iops": 3000,
+      "suitable_for_loadtest": true,
+      "recommended_client_threads": 250,
+      "notes": "Good balance for testing"
+    },
+    "M40": {
+      "name": "M40 (Dedicated)",
+      "ram_gb": 16,
+      "vcpus": 4,
+      "storage_gb": 80,
+      "max_connections": 3200,
+      "network_out_mbps": 800,
+      "iops": 6000,
+      "suitable_for_loadtest": true,
+      "recommended_client_threads": 400,
+      "notes": "Recommended for serious testing"
+    },
+    "M50": {
+      "name": "M50 (Dedicated)",
+      "ram_gb": 32,
+      "vcpus": 8,
+      "storage_gb": 160,
+      "max_connections": 6400,
+      "network_out_mbps": 1000,
+      "iops": 8000,
+      "suitable_for_loadtest": true,
+      "recommended_client_threads": 600,
+      "notes": "High-performance testing"
+    },
+    "M60": {
+      "name": "M60 (Dedicated)",
+      "ram_gb": 64,
+      "vcpus": 16,
+      "storage_gb": 320,
+      "max_connections": 12800,
+      "network_out_mbps": 2000,
+      "iops": 16000,
+      "suitable_for_loadtest": true,
+      "recommended_client_threads": 1000,
+      "notes": "Heavy load testing"
+    },
+    "M80": {
+      "name": "M80 (Dedicated)",
+      "ram_gb": 128,
+      "vcpus": 32,
+      "storage_gb": 750,
+      "max_connections": 25600,
+      "network_out_mbps": 4000,
+      "iops": 16000,
+      "suitable_for_loadtest": true,
+      "recommended_client_threads": 2000,
+      "notes": "Extreme load testing"
+    },
+    "M140": {
+      "name": "M140 (Dedicated)",
+      "ram_gb": 192,
+      "vcpus": 48,
+      "storage_gb": 1000,
+      "max_connections": 38400,
+      "network_out_mbps": 6000,
+      "iops": 16000,
+      "suitable_for_loadtest": true,
+      "recommended_client_threads": 3000,
+      "notes": "Very heavy load testing"
+    },
+    "M200": {
+      "name": "M200 (Dedicated)",
+      "ram_gb": 256,
+      "vcpus": 64,
+      "storage_gb": 1500,
+      "max_connections": 51200,
+      "network_out_mbps": 10000,
+      "iops": 16000,
+      "suitable_for_loadtest": true,
+      "recommended_client_threads": 4000,
+      "notes": "Maximum performance testing"
+    },
+    "M300": {
+      "name": "M300 (Dedicated)",
+      "ram_gb": 384,
+      "vcpus": 96,
+      "storage_gb": 2000,
+      "max_connections": 76800,
+      "network_out_mbps": 16000,
+      "iops": 16000,
+      "suitable_for_loadtest": true,
+      "recommended_client_threads": 6000,
+      "notes": "Massive scale testing"
+    },
+    "M400": {
+      "name": "M400 (Dedicated)",
+      "ram_gb": 488,
+      "vcpus": 128,
+      "storage_gb": 3000,
+      "max_connections": 102400,
+      "network_out_mbps": 20000,
+      "iops": 16000,
+      "suitable_for_loadtest": true,
+      "recommended_client_threads": 8000,
+      "notes": "Extreme scale testing"
+    }
+  },
+  "self_managed_references": {
+    "standalone": {
+      "name": "Self-Managed Standalone",
+      "typical_ram_gb": 32,
+      "typical_vcpus": 8,
+      "typical_max_connections": 65536,
+      "notes": "Standalone instance - no replication"
+    },
+    "replica_set_3_node": {
+      "name": "Self-Managed Replica Set (3 nodes)",
+      "typical_ram_gb": 64,
+      "typical_vcpus": 16,
+      "typical_max_connections": 65536,
+      "notes": "Standard replica set configuration"
+    },
+    "sharded_cluster": {
+      "name": "Self-Managed Sharded Cluster",
+      "typical_ram_gb": "varies",
+      "typical_vcpus": "varies",
+      "typical_max_connections": "varies",
+      "notes": "Depends on shard count and config"
+    }
+  },
+  "calculation_helpers": {
+    "recommended_max_threads_formula": "(cpu_cores - 2) * 10",
+    "recommended_connection_count_formula": "min(server_max_connections * 0.8, client_threads * 1.5)",
+    "ram_overflow_dataset_size_formula": "server_ram_gb * 1.5 * 1000000 / 1024",
+    "thread_to_cpu_ratio": {
+      "light": "cpu_cores * 2",
+      "medium": "cpu_cores * 4",
+      "heavy": "cpu_cores * 6",
+      "extreme": "cpu_cores * 10"
+    }
+  }
+}

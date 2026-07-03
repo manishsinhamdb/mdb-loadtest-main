@@ -1,0 +1,344 @@
+{
+  "metadata": {
+    "version": "2.0.0",
+    "last_updated": "2026-07-03",
+    "description": "Reverse mapping from Atlas/FTDC metrics to workloads that impact them. Based on EXPECTED_SIGNALS.md extended for all 131 metrics.",
+    "confidence_scale": "0.0 to 1.0, where 1.0 = guaranteed impact, 0.5 = likely impact, 0.3 = possible impact"
+  },
+  "mappings": {
+    "CONNECTIONS": [
+      {"workload": "connection_storm", "impact": "primary", "confidence": 1.0},
+      {"workload": "all", "impact": "tertiary", "confidence": 0.3}
+    ],
+    "CONNECTIONS_AVAILABLE": [
+      {"workload": "connection_storm", "impact": "primary", "confidence": 1.0, "inverse": true}
+    ],
+    "CONNECTIONS_ACTIVE": [
+      {"workload": "connection_storm", "impact": "primary", "confidence": 0.9}
+    ],
+    "CONNECTIONS_QUEUED_FOR_ESTABLISHMENT": [
+      {"workload": "connection_storm", "impact": "primary", "confidence": 0.9}
+    ],
+    "CONNECTIONS_REJECTED": [
+      {"workload": "connection_storm", "impact": "primary", "confidence": 0.8}
+    ],
+    "NETWORK_NUM_REQUESTS": [
+      {"workload": "connection_storm", "impact": "primary", "confidence": 0.9},
+      {"workload": "all", "impact": "secondary", "confidence": 0.5}
+    ],
+    "OPCOUNTER_QUERY": [
+      {"workload": "indexed_reads", "impact": "primary", "confidence": 1.0},
+      {"workload": "unindexed_scans", "impact": "primary", "confidence": 1.0},
+      {"workload": "mixed_blend", "impact": "secondary", "confidence": 0.8}
+    ],
+    "QUERY_EXECUTOR_SCANNED": [
+      {"workload": "indexed_reads", "impact": "primary", "confidence": 1.0},
+      {"workload": "aggregation_pipelines", "impact": "secondary", "confidence": 0.7}
+    ],
+    "QUERY_EXECUTOR_SCANNED_OBJECTS": [
+      {"workload": "unindexed_scans", "impact": "primary", "confidence": 1.0},
+      {"workload": "aggregation_pipelines", "impact": "secondary", "confidence": 0.7}
+    ],
+    "QUERY_TARGETING_SCANNED_PER_RETURNED": [
+      {"workload": "indexed_reads", "impact": "primary", "confidence": 0.9, "note": "Low ratio = good targeting"},
+      {"workload": "unindexed_scans", "impact": "inverse", "confidence": 0.8, "note": "Will increase ratio"}
+    ],
+    "QUERY_TARGETING_SCANNED_OBJECTS_PER_RETURNED": [
+      {"workload": "unindexed_scans", "impact": "primary", "confidence": 1.0, "note": "High ratio = poor targeting"},
+      {"workload": "indexed_reads", "impact": "inverse", "confidence": 0.7, "note": "Low ratio expected"}
+    ],
+    "OPERATIONS_SCAN_AND_ORDER": [
+      {"workload": "inmemory_sorts", "impact": "primary", "confidence": 1.0},
+      {"workload": "aggregation_pipelines", "impact": "secondary", "confidence": 0.6}
+    ],
+    "OPCOUNTER_INSERT": [
+      {"workload": "write_bursts", "impact": "primary", "confidence": 1.0},
+      {"workload": "mixed_blend", "impact": "secondary", "confidence": 0.7}
+    ],
+    "OPCOUNTER_UPDATE": [
+      {"workload": "update_contention", "impact": "primary", "confidence": 1.0},
+      {"workload": "mixed_blend", "impact": "secondary", "confidence": 0.6}
+    ],
+    "OPERATIONS_WRITE_CONFLICTS": [
+      {"workload": "update_contention", "impact": "primary", "confidence": 1.0}
+    ],
+    "DISK_PARTITION_IOPS_WRITE": [
+      {"workload": "write_bursts", "impact": "primary", "confidence": 0.9},
+      {"workload": "update_contention", "impact": "secondary", "confidence": 0.6}
+    ],
+    "CACHE_DIRTY_BYTES": [
+      {"workload": "write_bursts", "impact": "primary", "confidence": 0.9},
+      {"workload": "update_contention", "impact": "secondary", "confidence": 0.7}
+    ],
+    "CACHE_DIRTY_BYTES_PERCENT": [
+      {"workload": "write_bursts", "impact": "primary", "confidence": 0.9},
+      {"workload": "update_contention", "impact": "secondary", "confidence": 0.6}
+    ],
+    "WIREDTIGER_TRANSACTIONS_CHECKPOINT_MS": [
+      {"workload": "write_bursts", "impact": "primary", "confidence": 0.8}
+    ],
+    "TICKETS_AVAILABLE_WRITES": [
+      {"workload": "write_bursts", "impact": "primary", "confidence": 0.8},
+      {"workload": "update_contention", "impact": "primary", "confidence": 0.9}
+    ],
+    "TICKETS_AVAILABLE_WRITES_PERCENT": [
+      {"workload": "write_bursts", "impact": "primary", "confidence": 0.8},
+      {"workload": "update_contention", "impact": "primary", "confidence": 0.9}
+    ],
+    "GLOBAL_LOCK_CURRENT_QUEUE_TOTAL": [
+      {"workload": "update_contention", "impact": "primary", "confidence": 0.9},
+      {"workload": "connection_storm", "impact": "secondary", "confidence": 0.6}
+    ],
+    "GLOBAL_LOCK_CURRENT_QUEUE_WRITERS": [
+      {"workload": "update_contention", "impact": "primary", "confidence": 0.9},
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.6}
+    ],
+    "WIREDTIGER_TRANSACTIONS_ROLLEDBACK": [
+      {"workload": "update_contention", "impact": "primary", "confidence": 0.8}
+    ],
+    "SYSTEM_CPU_USER": [
+      {"workload": "aggregation_pipelines", "impact": "primary", "confidence": 0.8},
+      {"workload": "all", "impact": "secondary", "confidence": 0.5}
+    ],
+    "CACHE_BYTES_READ_INTO": [
+      {"workload": "indexed_reads", "impact": "primary", "confidence": 0.8},
+      {"workload": "unindexed_scans", "impact": "primary", "confidence": 0.8},
+      {"workload": "aggregation_pipelines", "impact": "primary", "confidence": 0.7}
+    ],
+    "NETWORK_BYTES_OUT": [
+      {"workload": "indexed_reads", "impact": "secondary", "confidence": 0.7},
+      {"workload": "unindexed_scans", "impact": "secondary", "confidence": 0.7},
+      {"workload": "aggregation_pipelines", "impact": "secondary", "confidence": 0.6}
+    ],
+    "DOCUMENT_METRICS_RETURNED": [
+      {"workload": "indexed_reads", "impact": "primary", "confidence": 0.9},
+      {"workload": "unindexed_scans", "impact": "primary", "confidence": 0.9},
+      {"workload": "aggregation_pipelines", "impact": "secondary", "confidence": 0.7}
+    ],
+    "CURSORS_TOTAL_OPEN": [
+      {"workload": "unindexed_scans", "impact": "secondary", "confidence": 0.6},
+      {"workload": "aggregation_pipelines", "impact": "secondary", "confidence": 0.7}
+    ],
+    "OPCOUNTER_GETMORE": [
+      {"workload": "unindexed_scans", "impact": "secondary", "confidence": 0.7}
+    ],
+    "CACHE_USED_PERCENT": [
+      {"workload": "unindexed_scans", "impact": "secondary", "confidence": 0.7},
+      {"workload": "aggregation_pipelines", "impact": "secondary", "confidence": 0.7},
+      {"workload": "all", "impact": "tertiary", "confidence": 0.4}
+    ],
+    "CACHE_EVICTED_UNMODIFIED": [
+      {"workload": "indexed_reads", "impact": "secondary", "confidence": 0.6},
+      {"workload": "unindexed_scans", "impact": "secondary", "confidence": 0.7}
+    ],
+    "CACHE_EVICTED_MODIFIED": [
+      {"workload": "write_bursts", "impact": "primary", "confidence": 0.7}
+    ],
+    "EXTRA_INFO_PAGE_FAULTS": [
+      {"workload": "unindexed_scans", "impact": "primary", "confidence": 0.8, "note": "Working set > RAM"}
+    ],
+    "GLOBAL_ACCESSES_NOT_IN_MEMORY": [
+      {"workload": "unindexed_scans", "impact": "primary", "confidence": 0.8, "note": "Page faults"}
+    ],
+    "DISK_PARTITION_IOPS_READ": [
+      {"workload": "indexed_reads", "impact": "secondary", "confidence": 0.6},
+      {"workload": "unindexed_scans", "impact": "primary", "confidence": 0.7}
+    ],
+    "DISK_PARTITION_LATENCY_READ": [
+      {"workload": "indexed_reads", "impact": "secondary", "confidence": 0.6},
+      {"workload": "unindexed_scans", "impact": "secondary", "confidence": 0.7}
+    ],
+    "DISK_PARTITION_LATENCY_WRITE": [
+      {"workload": "write_bursts", "impact": "primary", "confidence": 0.7}
+    ],
+    "SYSTEM_CPU_KERNEL": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.6},
+      {"workload": "all", "impact": "tertiary", "confidence": 0.3}
+    ],
+    "SYSTEM_CPU_IOWAIT": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.6},
+      {"workload": "unindexed_scans", "impact": "secondary", "confidence": 0.5}
+    ],
+    "SYSTEM_MEMORY_USED": [
+      {"workload": "aggregation_pipelines", "impact": "secondary", "confidence": 0.6},
+      {"workload": "inmemory_sorts", "impact": "secondary", "confidence": 0.7},
+      {"workload": "all", "impact": "tertiary", "confidence": 0.4}
+    ],
+    "SYSTEM_MEMORY_AVAILABLE": [
+      {"workload": "aggregation_pipelines", "impact": "secondary", "confidence": 0.6, "inverse": true},
+      {"workload": "inmemory_sorts", "impact": "secondary", "confidence": 0.7, "inverse": true}
+    ],
+    "CACHE_BYTES_WRITTEN_FROM": [
+      {"workload": "write_bursts", "impact": "primary", "confidence": 0.8},
+      {"workload": "update_contention", "impact": "secondary", "confidence": 0.7}
+    ],
+    "TICKETS_AVAILABLE_READS": [
+      {"workload": "indexed_reads", "impact": "secondary", "confidence": 0.7},
+      {"workload": "unindexed_scans", "impact": "secondary", "confidence": 0.7}
+    ],
+    "TICKETS_AVAILABLE_READS_PERCENT": [
+      {"workload": "indexed_reads", "impact": "secondary", "confidence": 0.7},
+      {"workload": "unindexed_scans", "impact": "secondary", "confidence": 0.7}
+    ],
+    "NETWORK_BYTES_IN": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.6},
+      {"workload": "all", "impact": "tertiary", "confidence": 0.4}
+    ],
+    "OPLOG_RATE_GB_PER_HOUR": [
+      {"workload": "write_bursts", "impact": "primary", "confidence": 0.8},
+      {"workload": "update_contention", "impact": "secondary", "confidence": 0.6}
+    ],
+    "OPLOG_MASTER_LAG_TIME_DIFF": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.7},
+      {"workload": "update_contention", "impact": "secondary", "confidence": 0.6}
+    ],
+    "OPCOUNTER_REPL_INSERT": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.8}
+    ],
+    "OPCOUNTER_REPL_UPDATE": [
+      {"workload": "update_contention", "impact": "secondary", "confidence": 0.8}
+    ],
+    "DOCUMENT_METRICS_INSERTED": [
+      {"workload": "write_bursts", "impact": "primary", "confidence": 0.9}
+    ],
+    "DOCUMENT_METRICS_UPDATED": [
+      {"workload": "update_contention", "impact": "primary", "confidence": 0.9}
+    ],
+    "WIREDTIGER_TRANSACTIONS_COMMITTED": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.7},
+      {"workload": "update_contention", "impact": "secondary", "confidence": 0.7},
+      {"workload": "all", "impact": "tertiary", "confidence": 0.4}
+    ],
+    "PROCESS_CPU_USER": [
+      {"workload": "all", "impact": "secondary", "confidence": 0.6}
+    ],
+    "PROCESS_NORMALIZED_CPU_USER": [
+      {"workload": "all", "impact": "secondary", "confidence": 0.6}
+    ],
+    "PROCESS_RESIDENT_MEMORY": [
+      {"workload": "all", "impact": "tertiary", "confidence": 0.4}
+    ],
+    "CACHE_USED_BYTES": [
+      {"workload": "all", "impact": "tertiary", "confidence": 0.5}
+    ],
+    "OPCOUNTER_CMD": [
+      {"workload": "all", "impact": "secondary", "confidence": 0.6}
+    ],
+    "OPCOUNTER_DELETE": [
+      {"workload": "mixed_blend", "impact": "tertiary", "confidence": 0.3}
+    ],
+    "DISK_PARTITION_UTILIZATION": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.5}
+    ],
+    "DATABASE_STORAGE_SIZE": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.5}
+    ],
+    "DATABASE_DATA_SIZE": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.5}
+    ],
+    "REPL_BUFFER_COUNT": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.6}
+    ],
+    "REPL_BUFFER_SIZE_BYTES": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.6}
+    ],
+    "REPL_APPLY_OPS": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.7},
+      {"workload": "update_contention", "impact": "secondary", "confidence": 0.6}
+    ],
+    "GLOBAL_LOCK_CURRENT_QUEUE_READERS": [
+      {"workload": "indexed_reads", "impact": "tertiary", "confidence": 0.4},
+      {"workload": "unindexed_scans", "impact": "tertiary", "confidence": 0.4}
+    ],
+    "QUERIES_OVER_THRESHOLD": [
+      {"workload": "unindexed_scans", "impact": "secondary", "confidence": 0.7},
+      {"workload": "aggregation_pipelines", "impact": "secondary", "confidence": 0.6}
+    ],
+    "CURSORS_TOTAL_TIMED_OUT": [
+      {"workload": "aggregation_pipelines", "impact": "tertiary", "confidence": 0.4},
+      {"workload": "unindexed_scans", "impact": "tertiary", "confidence": 0.3}
+    ],
+    "WIREDTIGER_BLOCK_MANAGER_BLOCKS_READ": [
+      {"workload": "unindexed_scans", "impact": "secondary", "confidence": 0.6}
+    ],
+    "WIREDTIGER_BLOCK_MANAGER_BLOCKS_WRITTEN": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.7}
+    ],
+    "WIREDTIGER_BLOCK_MANAGER_BYTES_READ": [
+      {"workload": "unindexed_scans", "impact": "secondary", "confidence": 0.6}
+    ],
+    "OPLOG_MASTER_TIME": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.6, "inverse": true, "note": "Window shrinks with heavy writes"}
+    ],
+    "REPL_NETWORK_BYTES": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.6}
+    ],
+    "REPL_NETWORK_GETMORES_NUM": [
+      {"workload": "write_bursts", "impact": "secondary", "confidence": 0.5}
+    ],
+    "SWAP_USAGE_USED": [
+      {"workload": "all", "impact": "critical", "confidence": 0.8, "note": "Indicates severe memory pressure - should normally be 0"}
+    ],
+    "ASSERT_REGULAR": [
+      {"workload": "none", "impact": "error", "confidence": 1.0, "note": "Server error - investigate immediately"}
+    ],
+    "ASSERT_WARNING": [
+      {"workload": "none", "impact": "warning", "confidence": 1.0, "note": "Server warning condition"}
+    ]
+  },
+  "workload_primary_metrics": {
+    "connection_storm": [
+      "CONNECTIONS",
+      "CONNECTIONS_AVAILABLE",
+      "GLOBAL_LOCK_CURRENT_QUEUE_TOTAL",
+      "NETWORK_NUM_REQUESTS"
+    ],
+    "indexed_reads": [
+      "OPCOUNTER_QUERY",
+      "QUERY_EXECUTOR_SCANNED",
+      "QUERY_TARGETING_SCANNED_PER_RETURNED"
+    ],
+    "unindexed_scans": [
+      "OPCOUNTER_QUERY",
+      "QUERY_EXECUTOR_SCANNED_OBJECTS",
+      "QUERY_TARGETING_SCANNED_OBJECTS_PER_RETURNED"
+    ],
+    "inmemory_sorts": [
+      "OPERATIONS_SCAN_AND_ORDER"
+    ],
+    "aggregation_pipelines": [
+      "SYSTEM_CPU_USER",
+      "QUERY_EXECUTOR_SCANNED",
+      "CACHE_BYTES_READ_INTO"
+    ],
+    "write_bursts": [
+      "OPCOUNTER_INSERT",
+      "DISK_PARTITION_IOPS_WRITE",
+      "CACHE_DIRTY_BYTES",
+      "CACHE_DIRTY_BYTES_PERCENT",
+      "WIREDTIGER_TRANSACTIONS_CHECKPOINT_MS"
+    ],
+    "update_contention": [
+      "OPCOUNTER_UPDATE",
+      "OPERATIONS_WRITE_CONFLICTS",
+      "TICKETS_AVAILABLE_WRITES",
+      "TICKETS_AVAILABLE_WRITES_PERCENT"
+    ],
+    "mixed_blend": [
+      "OPCOUNTER_CMD",
+      "OPCOUNTER_QUERY",
+      "OPCOUNTER_INSERT",
+      "OPCOUNTER_UPDATE"
+    ]
+  },
+  "metric_categories_affected_by_intent": {
+    "connection_stress": ["connections_network"],
+    "read_performance": ["operations_opcounters", "query_performance", "cache_wiredtiger", "hardware_system"],
+    "write_throughput": ["operations_opcounters", "cache_wiredtiger", "hardware_system", "replication"],
+    "aggregation_pipeline": ["query_performance", "cache_wiredtiger", "hardware_system"],
+    "concurrency_contention": ["operations_opcounters", "cache_wiredtiger"],
+    "cache_pressure": ["cache_wiredtiger", "hardware_system", "query_performance"],
+    "mixed_production": ["all"],
+    "custom": ["varies"]
+  }
+}

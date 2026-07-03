@@ -1,0 +1,545 @@
+{
+  "metadata": {
+    "version": "2.0.0",
+    "last_updated": "2026-07-03",
+    "description": "Pre-calculated intent-based test configuration templates with dynamic parameter formulas"
+  },
+  "intents": {
+    "connection_stress": {
+      "id": "connection_stress",
+      "name": "Connection Stress",
+      "description": "Test connection pool limits and concurrent connection handling capacity",
+      "icon": "🔌",
+      "category": "infrastructure",
+      "workloads": {
+        "connection_storm": {
+          "enabled": true,
+          "params": {
+            "connection_count": "{calculated}",
+            "hold_seconds": 300
+          }
+        }
+      },
+      "seeding_requirement": "minimal",
+      "seeding_params": {
+        "large_count": 10000,
+        "agg_count": 5000,
+        "hot_docs": 100
+      },
+      "primary_metrics": [
+        "CONNECTIONS",
+        "CONNECTIONS_AVAILABLE",
+        "GLOBAL_LOCK_CURRENT_QUEUE_TOTAL",
+        "NETWORK_NUM_REQUESTS"
+      ],
+      "secondary_metrics": [
+        "NETWORK_BYTES_IN",
+        "SYSTEM_MEMORY_USED",
+        "CONNECTIONS_ACTIVE"
+      ],
+      "calculation_formulas": {
+        "connection_count": "min(server_max_connections * 0.5, client_cpu_cores * 100) * intensity_multiplier"
+      },
+      "intensity_multipliers": {
+        "light": 0.25,
+        "medium": 0.5,
+        "heavy": 0.75,
+        "extreme": 1.0
+      },
+      "resource_estimates": {
+        "client_cpu_percent": 10,
+        "client_ram_mb": 500,
+        "server_cpu_percent": 15,
+        "server_ram_gb": 1,
+        "network_mbps": 10
+      },
+      "recommended_duration_seconds": 300,
+      "warnings": [
+        "High connection counts may exhaust server connection pool",
+        "Monitor CONNECTIONS_AVAILABLE to avoid connection exhaustion"
+      ]
+    },
+    "read_performance": {
+      "id": "read_performance",
+      "name": "Read Performance",
+      "description": "Evaluate indexed and unindexed query performance under load",
+      "icon": "📖",
+      "category": "query",
+      "workloads": {
+        "indexed_reads": {
+          "enabled": true,
+          "params": {
+            "threads": "{calculated}",
+            "target_ops_per_sec": 0
+          }
+        },
+        "unindexed_scans": {
+          "enabled": true,
+          "params": {
+            "threads": "{calculated}",
+            "target_ops_per_sec": 0
+          }
+        }
+      },
+      "seeding_requirement": "required",
+      "seeding_params": {
+        "large_count": "{data_size}",
+        "agg_count": 50000,
+        "hot_docs": 100
+      },
+      "primary_metrics": [
+        "OPCOUNTER_QUERY",
+        "QUERY_EXECUTOR_SCANNED",
+        "QUERY_EXECUTOR_SCANNED_OBJECTS",
+        "QUERY_TARGETING_SCANNED_PER_RETURNED",
+        "QUERY_TARGETING_SCANNED_OBJECTS_PER_RETURNED"
+      ],
+      "secondary_metrics": [
+        "CACHE_BYTES_READ_INTO",
+        "NETWORK_BYTES_OUT",
+        "DOCUMENT_METRICS_RETURNED",
+        "DISK_PARTITION_IOPS_READ",
+        "SYSTEM_CPU_USER"
+      ],
+      "calculation_formulas": {
+        "indexed_reads_threads": "client_cpu_cores * intensity_multiplier * 8",
+        "unindexed_scans_threads": "client_cpu_cores * intensity_multiplier * 4"
+      },
+      "intensity_multipliers": {
+        "light": 0.25,
+        "medium": 0.5,
+        "heavy": 0.75,
+        "extreme": 1.0
+      },
+      "data_size_options": {
+        "10k": 10000,
+        "100k": 100000,
+        "1m": 1000000,
+        "10m": 10000000
+      },
+      "resource_estimates": {
+        "client_cpu_percent": 70,
+        "client_ram_mb": 4096,
+        "server_cpu_percent": 50,
+        "server_ram_gb": 12,
+        "network_mbps": 100
+      },
+      "recommended_duration_seconds": 600,
+      "warnings": [
+        "Unindexed scans will show high QUERY_TARGETING ratio (inefficient queries)",
+        "Large datasets may require significant seeding time"
+      ]
+    },
+    "write_throughput": {
+      "id": "write_throughput",
+      "name": "Write Throughput",
+      "description": "Stress test insert capacity, checkpoint behavior, and disk I/O",
+      "icon": "✍️",
+      "category": "write",
+      "workloads": {
+        "write_bursts": {
+          "enabled": true,
+          "params": {
+            "threads": "{calculated}",
+            "batch_size": 100,
+            "doc_kb": 10
+          }
+        }
+      },
+      "seeding_requirement": "minimal",
+      "seeding_params": {
+        "large_count": 10000,
+        "agg_count": 5000,
+        "hot_docs": 100
+      },
+      "primary_metrics": [
+        "OPCOUNTER_INSERT",
+        "DISK_PARTITION_IOPS_WRITE",
+        "CACHE_DIRTY_BYTES",
+        "CACHE_DIRTY_BYTES_PERCENT",
+        "WIREDTIGER_TRANSACTIONS_CHECKPOINT_MS"
+      ],
+      "secondary_metrics": [
+        "DISK_PARTITION_LATENCY_WRITE",
+        "TICKETS_AVAILABLE_WRITES",
+        "TICKETS_AVAILABLE_WRITES_PERCENT",
+        "SYSTEM_CPU_KERNEL",
+        "OPLOG_RATE_GB_PER_HOUR"
+      ],
+      "calculation_formulas": {
+        "threads": "min(client_cpu_cores * intensity_multiplier * 5, server_vcpus * 2)"
+      },
+      "intensity_multipliers": {
+        "light": 0.25,
+        "medium": 0.5,
+        "heavy": 0.75,
+        "extreme": 1.0
+      },
+      "resource_estimates": {
+        "client_cpu_percent": 60,
+        "client_ram_mb": 2048,
+        "server_cpu_percent": 55,
+        "server_ram_gb": 8,
+        "network_mbps": 80,
+        "disk_iops": 5000
+      },
+      "recommended_duration_seconds": 600,
+      "warnings": [
+        "High write rates will increase dirty cache percentage",
+        "Monitor checkpoint duration - spikes indicate I/O pressure",
+        "Write tickets may be exhausted under extreme load"
+      ]
+    },
+    "aggregation_pipeline": {
+      "id": "aggregation_pipeline",
+      "name": "Aggregation Pipeline",
+      "description": "Test complex aggregation query performance with grouping and sorting",
+      "icon": "🔄",
+      "category": "query",
+      "workloads": {
+        "aggregation_pipelines": {
+          "enabled": true,
+          "params": {
+            "threads": "{calculated}",
+            "complexity": "high"
+          }
+        }
+      },
+      "seeding_requirement": "required",
+      "seeding_params": {
+        "large_count": 500000,
+        "agg_count": "{data_size}",
+        "hot_docs": 100
+      },
+      "primary_metrics": [
+        "SYSTEM_CPU_USER",
+        "QUERY_EXECUTOR_SCANNED",
+        "CACHE_BYTES_READ_INTO",
+        "OPERATIONS_SCAN_AND_ORDER"
+      ],
+      "secondary_metrics": [
+        "DOCUMENT_METRICS_RETURNED",
+        "CURSORS_TOTAL_OPEN",
+        "SYSTEM_MEMORY_USED",
+        "NETWORK_BYTES_OUT"
+      ],
+      "calculation_formulas": {
+        "threads": "client_cpu_cores * intensity_multiplier * 4"
+      },
+      "intensity_multipliers": {
+        "light": 0.25,
+        "medium": 0.5,
+        "heavy": 0.75,
+        "extreme": 1.0
+      },
+      "data_size_options": {
+        "50k": 50000,
+        "100k": 100000,
+        "500k": 500000,
+        "1m": 1000000
+      },
+      "resource_estimates": {
+        "client_cpu_percent": 65,
+        "client_ram_mb": 3072,
+        "server_cpu_percent": 75,
+        "server_ram_gb": 16,
+        "network_mbps": 120
+      },
+      "recommended_duration_seconds": 600,
+      "warnings": [
+        "Complex aggregations may cause high CPU usage",
+        "In-memory sorts will spike if data exceeds sort buffer",
+        "Monitor cursor timeouts for long-running pipelines"
+      ]
+    },
+    "concurrency_contention": {
+      "id": "concurrency_contention",
+      "name": "Concurrency & Contention",
+      "description": "Test write conflicts and lock contention with hot documents",
+      "icon": "🔒",
+      "category": "concurrency",
+      "workloads": {
+        "update_contention": {
+          "enabled": true,
+          "params": {
+            "threads": "{calculated}",
+            "hot_doc_count": 50
+          }
+        }
+      },
+      "seeding_requirement": "required",
+      "seeding_params": {
+        "large_count": 100000,
+        "agg_count": 50000,
+        "hot_docs": 50
+      },
+      "primary_metrics": [
+        "OPCOUNTER_UPDATE",
+        "OPERATIONS_WRITE_CONFLICTS",
+        "TICKETS_AVAILABLE_WRITES",
+        "TICKETS_AVAILABLE_WRITES_PERCENT"
+      ],
+      "secondary_metrics": [
+        "GLOBAL_LOCK_CURRENT_QUEUE_WRITERS",
+        "WIREDTIGER_TRANSACTIONS_ROLLEDBACK",
+        "SYSTEM_CPU_USER",
+        "CACHE_BYTES_WRITTEN_FROM"
+      ],
+      "calculation_formulas": {
+        "threads": "min(100, client_cpu_cores * intensity_multiplier * 10)"
+      },
+      "intensity_multipliers": {
+        "light": 0.25,
+        "medium": 0.5,
+        "heavy": 0.75,
+        "extreme": 1.0
+      },
+      "resource_estimates": {
+        "client_cpu_percent": 55,
+        "client_ram_mb": 2048,
+        "server_cpu_percent": 70,
+        "server_ram_gb": 6,
+        "network_mbps": 50
+      },
+      "recommended_duration_seconds": 600,
+      "warnings": [
+        "High thread counts competing for few documents will cause many write conflicts",
+        "Write tickets will be exhausted quickly under extreme contention",
+        "Monitor transaction rollback count - indicates conflict severity"
+      ]
+    },
+    "cache_pressure": {
+      "id": "cache_pressure",
+      "name": "Cache Pressure",
+      "description": "Test behavior when working set exceeds available cache (RAM overflow)",
+      "icon": "💾",
+      "category": "memory",
+      "workloads": {
+        "unindexed_scans": {
+          "enabled": true,
+          "params": {
+            "threads": "{calculated}",
+            "target_ops_per_sec": 0
+          }
+        },
+        "aggregation_pipelines": {
+          "enabled": true,
+          "params": {
+            "threads": "{calculated}",
+            "complexity": "high"
+          }
+        }
+      },
+      "seeding_requirement": "required",
+      "seeding_params": {
+        "large_count": "{calculated_for_ram_overflow}",
+        "agg_count": "{calculated_for_ram_overflow}",
+        "hot_docs": 100
+      },
+      "primary_metrics": [
+        "CACHE_USED_PERCENT",
+        "CACHE_EVICTED_UNMODIFIED",
+        "CACHE_EVICTED_MODIFIED",
+        "EXTRA_INFO_PAGE_FAULTS",
+        "GLOBAL_ACCESSES_NOT_IN_MEMORY"
+      ],
+      "secondary_metrics": [
+        "DISK_PARTITION_IOPS_READ",
+        "SYSTEM_CPU_IOWAIT",
+        "DISK_PARTITION_LATENCY_READ",
+        "SYSTEM_MEMORY_AVAILABLE"
+      ],
+      "calculation_formulas": {
+        "large_count": "int(server_ram_gb * 1.5 * 1000000 / 1024)",
+        "agg_count": "int(server_ram_gb * 0.5 * 1000000 / 1024)",
+        "unindexed_threads": "client_cpu_cores * intensity_multiplier * 4",
+        "aggregation_threads": "client_cpu_cores * intensity_multiplier * 2"
+      },
+      "intensity_multipliers": {
+        "light": 0.25,
+        "medium": 0.5,
+        "heavy": 0.75,
+        "extreme": 1.0
+      },
+      "resource_estimates": {
+        "client_cpu_percent": 75,
+        "client_ram_mb": 4096,
+        "server_cpu_percent": 60,
+        "server_ram_gb": "150% of server RAM (intentional overflow)",
+        "network_mbps": 90,
+        "disk_iops": 3000
+      },
+      "recommended_duration_seconds": 900,
+      "warnings": [
+        "Dataset is intentionally sized to exceed server RAM - will cause cache evictions",
+        "Page faults will increase as working set exceeds cache",
+        "Expect higher disk I/O and CPU iowait",
+        "Seeding may take significant time for large datasets"
+      ]
+    },
+    "mixed_production": {
+      "id": "mixed_production",
+      "name": "Mixed Production Simulation",
+      "description": "Realistic blend of all workload types simulating production traffic",
+      "icon": "🎯",
+      "category": "simulation",
+      "workloads": {
+        "mixed_blend": {
+          "enabled": true,
+          "params": {
+            "threads": "{calculated}",
+            "seed": "{random}"
+          }
+        }
+      },
+      "seeding_requirement": "required",
+      "seeding_params": {
+        "large_count": 1000000,
+        "agg_count": 50000,
+        "hot_docs": 100
+      },
+      "primary_metrics": [
+        "OPCOUNTER_CMD",
+        "OPCOUNTER_QUERY",
+        "OPCOUNTER_INSERT",
+        "OPCOUNTER_UPDATE"
+      ],
+      "secondary_metrics": [
+        "SYSTEM_CPU_USER",
+        "CACHE_USED_BYTES",
+        "CONNECTIONS",
+        "NETWORK_BYTES_IN",
+        "NETWORK_BYTES_OUT",
+        "DISK_PARTITION_IOPS_READ",
+        "DISK_PARTITION_IOPS_WRITE"
+      ],
+      "calculation_formulas": {
+        "threads": "client_cpu_cores * intensity_multiplier * 6"
+      },
+      "intensity_multipliers": {
+        "light": 0.25,
+        "medium": 0.5,
+        "heavy": 0.75,
+        "extreme": 1.0
+      },
+      "resource_estimates": {
+        "client_cpu_percent": 80,
+        "client_ram_mb": 5120,
+        "server_cpu_percent": 65,
+        "server_ram_gb": 18,
+        "network_mbps": 150
+      },
+      "recommended_duration_seconds": 1200,
+      "warnings": [
+        "Blend uses randomized workload selection - results may vary between runs",
+        "All primary metric categories will show activity",
+        "Most realistic representation of production load patterns"
+      ]
+    },
+    "custom": {
+      "id": "custom",
+      "name": "Custom / Advanced",
+      "description": "Full manual control over all workload parameters",
+      "icon": "⚙️",
+      "category": "advanced",
+      "workloads": {
+        "connection_storm": {
+          "enabled": false,
+          "params": {
+            "connection_count": 100,
+            "hold_seconds": 300
+          }
+        },
+        "indexed_reads": {
+          "enabled": false,
+          "params": {
+            "threads": 4,
+            "target_ops_per_sec": 0
+          }
+        },
+        "unindexed_scans": {
+          "enabled": false,
+          "params": {
+            "threads": 4,
+            "target_ops_per_sec": 0
+          }
+        },
+        "inmemory_sorts": {
+          "enabled": false,
+          "params": {
+            "threads": 4
+          }
+        },
+        "aggregation_pipelines": {
+          "enabled": false,
+          "params": {
+            "threads": 4,
+            "complexity": "medium"
+          }
+        },
+        "write_bursts": {
+          "enabled": false,
+          "params": {
+            "threads": 4,
+            "batch_size": 100,
+            "doc_kb": 10
+          }
+        },
+        "update_contention": {
+          "enabled": false,
+          "params": {
+            "threads": 4,
+            "hot_doc_count": 100
+          }
+        },
+        "mixed_blend": {
+          "enabled": false,
+          "params": {
+            "threads": 12,
+            "seed": null
+          }
+        }
+      },
+      "seeding_requirement": "configurable",
+      "seeding_params": {
+        "large_count": 1000000,
+        "agg_count": 50000,
+        "hot_docs": 100
+      },
+      "primary_metrics": [],
+      "secondary_metrics": [],
+      "calculation_formulas": {},
+      "intensity_multipliers": {
+        "light": 1.0,
+        "medium": 1.0,
+        "heavy": 1.0,
+        "extreme": 1.0
+      },
+      "resource_estimates": {
+        "client_cpu_percent": "varies",
+        "client_ram_mb": "varies",
+        "server_cpu_percent": "varies",
+        "server_ram_gb": "varies",
+        "network_mbps": "varies"
+      },
+      "recommended_duration_seconds": 600,
+      "warnings": [
+        "Manual configuration - user is responsible for parameter tuning",
+        "No automatic resource validation - override limits at your own risk",
+        "Metric impact predictions not available in custom mode"
+      ]
+    }
+  },
+  "global_settings": {
+    "default_intensity": "medium",
+    "default_duration_seconds": 600,
+    "default_data_size": "1m",
+    "default_concurrency_level": 10,
+    "min_duration_seconds": 60,
+    "max_duration_seconds": 86400,
+    "min_threads_per_workload": 1,
+    "max_threads_per_workload": 1000,
+    "thread_safety_multiplier": 10,
+    "ram_safety_margin_percent": 20
+  }
+}

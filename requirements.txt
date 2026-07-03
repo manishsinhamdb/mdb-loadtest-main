@@ -9,3 +9,14 @@ uvicorn[standard]>=0.30,<1
 # Scheduling with persistent (SQLite) jobstore — survives restart
 APScheduler>=3.10,<4
 SQLAlchemy>=2.0,<3
+
+# V2 NEW DEPENDENCIES --------------------------------------------------------
+
+# Hardware discovery (client CPU, RAM, disk, network)
+psutil>=6.0,<7
+
+# Encryption for connection URIs and API keys
+cryptography>=43.0,<44
+
+# HTTP client for Atlas API integration (optional real-time metrics)
+httpx>=0.27,<1
