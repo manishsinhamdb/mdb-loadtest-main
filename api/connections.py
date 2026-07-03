@@ -15,6 +15,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from core.connection_manager import get_connection_manager
+from core.hardware_discovery import discover_client_hardware
 from db.models import init_db
 import preflight
 from db import resolve_db_name
@@ -238,6 +239,16 @@ def test_connection(profile_id: int):
         manager.update_test_result(session, profile_id, conn_result["ok"])
 
         if conn_result["ok"]:
+            # Run client hardware discovery
+            client_hw = discover_client_hardware()
+            if "error" not in client_hw and "summary" in client_hw:
+                client_data = {
+                    "cpu_cores": client_hw["summary"]["cpu_cores"],
+                    "ram_gb": client_hw["summary"]["ram_gb"],
+                    "storage_gb": client_hw["summary"]["storage_free_gb"],
+                }
+                manager.update_discovery_data(session, profile_id, client_data=client_data)
+
             # Store server discovery data
             server_data = {
                 "version": conn_result.get("server_version"),
